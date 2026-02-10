@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-py"
+  interface = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+
+model WorkOrder {
+  id                BigInt   @id @default(autoincrement())
+  created_at        DateTime @default(now())
+  work_order_number String?
+  job_number        String?
+  description       String?
+  hours             String?
+  date              String?
+  signed_by_both    Boolean?
+  raw_text          String?
+
+  @@map("work_orders")
+}
