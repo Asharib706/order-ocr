@@ -30,7 +30,7 @@ def insert_work_orders(data_list):
         # We need to filter keys that are not in the table if strict, but Supabase/Postgrest usually ignores extra if configured? 
         # Actually usually it errors on unknown columns.
         # Let's ensure we only send known columns.
-        valid_keys = {'work_order_number', 'job_number', 'description', 'hours', 'date', 'signed_by_both', 'customer_sign', 'wcdp_sign', 'raw_text'}
+        valid_keys = {'work_order_number', 'job_number', 'description', 'hours', 'date', 'total_amount_due', 'signed_by_both', 'customer_sign', 'wcdp_sign', 'raw_text'}
         
         cleaned_data = []
         for item in data_list:
@@ -52,6 +52,7 @@ create table public.work_orders (
   description text,
   hours text,
   date text,
+  total_amount_due text,
   signed_by_both boolean,
   customer_sign boolean,
   wcdp_sign boolean,
@@ -60,9 +61,9 @@ create table public.work_orders (
 );
 """
 
-def fetch_work_orders(page=1, page_size=10, search_query="", filters=None):
+def fetch_work_orders(page=1, page_size=10, search_query="", filters=None, sort_by="created_at", ascending=False):
     """
-    Fetches work orders from Supabase with pagination, search, and specific filters.
+    Fetches work orders from Supabase with pagination, search, filters, and sorting.
     filters: dict with keys like 'hours', 'signed_by_both', 'customer_sign', 'wcdp_sign'
     """
     if not supabase:
@@ -87,10 +88,13 @@ def fetch_work_orders(page=1, page_size=10, search_query="", filters=None):
                 if val is not None:
                      query = query.eq(bool_col, val)
 
+        # Sorting
+        query = query.order(sort_by, desc=not ascending)
+
         # Pagination
         start = (page - 1) * page_size
         end = start + page_size - 1
-        query = query.range(start, end).order("created_at", desc=True)
+        query = query.range(start, end)
         
         response = query.execute()
         return {"data": response.data, "count": response.count}
@@ -98,7 +102,7 @@ def fetch_work_orders(page=1, page_size=10, search_query="", filters=None):
     except Exception as e:
         return {"error": str(e), "data": [], "count": 0}
 
-def fetch_all_work_orders(search_query="", filters=None):
+def fetch_all_work_orders(search_query="", filters=None, sort_by="created_at", ascending=False):
     """
     Fetches all matching work orders for export.
     """
@@ -123,7 +127,9 @@ def fetch_all_work_orders(search_query="", filters=None):
                 if val is not None:
                      query = query.eq(bool_col, val)
             
-        query = query.order("created_at", desc=True)
+        # Sorting
+        query = query.order(sort_by, desc=not ascending)
+        
         response = query.execute()
         return response.data
         

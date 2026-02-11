@@ -26,8 +26,9 @@ def extract_work_order_data(image):
           "work_order_number": "The work order number, usually near top right",
           "job_number": "Job number",
           "description": "Description of work (combine lines if necessary)",
-          "date": "Date of the work order",
+          "date": "Date of the work order (format: DD-MM-YYYY)",
           "hours": "Total hours",
+          "total_amount_due": "Total Amount Due (number or string, usually near bottom right)",
           "signed_by_both": boolean (true if both WCDP Signature and Customer Signature are present, false otherwise),
           "customer_sign": boolean (true if Customer Signature is present),
           "wcdp_sign": boolean (true if WCDP Signature is present)

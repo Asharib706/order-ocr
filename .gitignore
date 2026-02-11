@@ -5,6 +5,6 @@ build/
 dist/
 wheels/
 
-
+.env
 # Virtual environments
 .venv
