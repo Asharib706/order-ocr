@@ -1,7 +1,5 @@
 generator client {
-  provider = "prisma-client-py"
-  interface = "asyncio"
-  recursive_type_depth = 5
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -9,20 +7,19 @@ datasource db {
   url       = env("DATABASE_URL")
 }
 
-
 model WorkOrder {
-  id                BigInt   @id @default(autoincrement())
-  created_at        DateTime @default(now())
+  id                BigInt    @id @default(autoincrement())
+  created_at        DateTime  @default(now())
   work_order_number String?
   job_number        String?
   description       String?
   hours             String?
   date              String?
+  total_amount_due  String?
   signed_by_both    Boolean?
   customer_sign     Boolean?
   wcdp_sign         Boolean?
-  total_amount_due  String?
   raw_text          String?
 
   @@map("work_orders")
-}   
+}
