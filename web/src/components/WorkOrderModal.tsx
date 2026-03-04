@@ -17,6 +17,7 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
     const [formData, setFormData] = useState<Partial<WorkOrder>>({});
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (order) setFormData({ ...order });
     }, [order]);
 
@@ -42,7 +43,7 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
             <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 rounded-2xl w-[95%] max-w-[640px] max-h-[85vh] flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] animate-[modal-in_0.25s_cubic-bezier(0.34,1.56,0.64,1)]" onClick={(e) => e.stopPropagation()}>
 
                 {/* Header */}
-                <div className="flex items-start justify-between px-7 pt-5 pb-3 border-b border-slate-200 dark:border-white/10">
+                <div className="flex items-start justify-between px-4 sm:px-7 pt-5 pb-3 border-b border-slate-200 dark:border-white/10">
                     <div>
                         <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-0.5">
                             {isView ? '📋 Work Order Details' : '✏️ Edit Work Order'}
@@ -55,9 +56,9 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
                 </div>
 
                 {/* Body */}
-                <div className="px-7 py-4 overflow-y-auto flex flex-col gap-4">
+                <div className="px-4 sm:px-7 py-4 overflow-y-auto flex flex-col gap-4">
                     {/* Row 1 */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
                             <label className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Work Order #</label>
                             {isView ? (
@@ -77,7 +78,7 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
                     </div>
 
                     {/* Row 2 */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
                             <label className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Date</label>
                             {isView ? (
@@ -137,7 +138,7 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
                     <div className="flex flex-col gap-1">
                         <label className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Description</label>
                         {isView ? (
-                            <div className="text-sm text-slate-900 dark:text-slate-100 px-3 py-2 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-100 dark:border-white/5 min-h-[60px] whitespace-pre-wrap">{order.description || '—'}</div>
+                            <div className="text-sm text-slate-900 dark:text-slate-100 px-3 py-2 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-100 dark:border-white/5 min-h-[60px] whitespace-pre-wrap break-words">{order.description || '—'}</div>
                         ) : (
                             <textarea className={`${inputCls} resize-y min-h-[80px]`} value={formData.description || ''} onChange={(e) => handleChange('description', e.target.value)} placeholder="Enter description" rows={4} />
                         )}
@@ -147,13 +148,13 @@ export default function WorkOrderModal({ isOpen, onClose, order, mode, onSave, o
                     {isView && order.raw_text && (
                         <div className="flex flex-col gap-1">
                             <label className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Raw OCR Text</label>
-                            <div className="text-xs font-mono text-slate-400 dark:text-slate-500 px-3 py-2 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-100 dark:border-white/5 max-h-[150px] overflow-y-auto whitespace-pre-wrap">{order.raw_text}</div>
+                            <div className="text-xs font-mono text-slate-400 dark:text-slate-500 px-3 py-2 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-100 dark:border-white/5 max-h-[150px] overflow-y-auto whitespace-pre-wrap break-all">{order.raw_text}</div>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-2.5 px-7 py-4 border-t border-slate-200 dark:border-white/10">
+                <div className="flex items-center justify-end gap-2.5 px-4 sm:px-7 py-4 border-t border-slate-200 dark:border-white/10">
                     {isView ? (
                         <>
                             <button className="px-4 py-2 rounded-[10px] text-sm font-semibold bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/15 transition-all cursor-pointer" onClick={onClose}>Close</button>

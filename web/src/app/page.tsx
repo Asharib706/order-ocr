@@ -151,13 +151,13 @@ export default function UploadPage() {
           <div className="h-px bg-slate-200 dark:bg-white/10 my-6" />
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-4">✅ Extracted Data</h2>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 mb-6">
             <MetricCard label="Items Extracted" value={results.length} icon="📋" color="primary" />
             <MetricCard label="Total Hours" value={totalHours.toFixed(2)} icon="⏱️" color="info" />
             <MetricCard label="Fully Signed" value={`${signedPct}%`} icon="✍️" color="success" />
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] shadow-sm">
+          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] shadow-sm">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
@@ -210,6 +210,64 @@ export default function UploadPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards for Extracted Data */}
+          <div className="lg:hidden flex flex-col mt-4">
+            {results.map((r, idx) => (
+              <div key={idx} className="p-4 mb-3 border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] rounded-xl shadow-sm flex flex-col gap-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded-md">#{idx + 1}</span>
+                    {editingIdx !== idx && <span className="font-bold text-slate-900 dark:text-slate-100">{r.work_order_number || 'No Order #'}</span>}
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    {editingIdx === idx ? (
+                      <button className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center hover:bg-emerald-500/20 transition-all cursor-pointer" onClick={() => setEditingIdx(null)} title="Done">✓</button>
+                    ) : (
+                      <button className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all cursor-pointer" onClick={() => setEditingIdx(idx)} title="Edit">✎</button>
+                    )}
+                    <button className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all cursor-pointer" onClick={() => removeResult(idx)} title="Remove">🗑</button>
+                  </div>
+                </div>
+
+                {editingIdx === idx ? (
+                  <div className="flex flex-col gap-3">
+                    <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Order #</label><input className={inputCls} value={r.work_order_number || ''} onChange={(e) => updateResult(idx, 'work_order_number', e.target.value)} /></div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Job #</label><input className={inputCls} value={r.job_number || ''} onChange={(e) => updateResult(idx, 'job_number', e.target.value)} /></div>
+                      <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Date</label><input className={inputCls} value={r.date || ''} onChange={(e) => updateResult(idx, 'date', e.target.value)} /></div>
+                      <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Hours</label><input className={inputCls} value={r.hours || ''} onChange={(e) => updateResult(idx, 'hours', e.target.value)} /></div>
+                      <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Total Due</label><input className={inputCls} value={r.total_amount_due || ''} onChange={(e) => updateResult(idx, 'total_amount_due', e.target.value)} /></div>
+                    </div>
+                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-white/5 p-3 rounded-lg border border-slate-100 dark:border-white/5">
+                      <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" className="w-[16px] h-[16px] accent-primary" checked={!!r.signed_by_both} onChange={(e) => updateResult(idx, 'signed_by_both', e.target.checked)} /> Both Signed</label>
+                      <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" className="w-[16px] h-[16px] accent-primary" checked={!!r.customer_sign} onChange={(e) => updateResult(idx, 'customer_sign', e.target.checked)} /> Customer Sign</label>
+                      <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" className="w-[16px] h-[16px] accent-primary" checked={!!r.wcdp_sign} onChange={(e) => updateResult(idx, 'wcdp_sign', e.target.checked)} /> WCDP Sign</label>
+                    </div>
+                    <div><label className="text-[0.65rem] uppercase text-slate-400 mb-1 block">Desc.</label><textarea className={`${inputCls} min-h-[60px]`} value={r.description || ''} onChange={(e) => updateResult(idx, 'description', e.target.value)} /></div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-slate-600 dark:text-slate-300">
+                      <div><span className="text-xs text-slate-400 block">Job #</span>{r.job_number || '—'}</div>
+                      <div><span className="text-xs text-slate-400 block">Date</span>{r.date || '—'}</div>
+                      <div><span className="text-xs text-slate-400 block">Hours</span>{r.hours || '—'}</div>
+                      <div><span className="text-xs text-slate-400 block">Total Due</span>{r.total_amount_due ? `$${r.total_amount_due}` : '—'}</div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${r.signed_by_both ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{r.signed_by_both ? '✓ Both Signed' : '✗ Both Signed'}</span>
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${r.customer_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{r.customer_sign ? '✓ Customer' : '✗ Customer'}</span>
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${r.wcdp_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{r.wcdp_sign ? '✓ WCDP' : '✗ WCDP'}</span>
+                    </div>
+
+                    {r.description && <div className="text-xs text-slate-500 line-clamp-2 mt-1">{r.description}</div>}
+                    <div className="text-[0.65rem] text-slate-400 mt-1 border-t border-slate-100 dark:border-white/5 pt-2">File: {r.filename}</div>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
 
           <div className="flex gap-3 mt-5 flex-wrap">

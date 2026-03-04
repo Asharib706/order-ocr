@@ -95,7 +95,7 @@ export default function WorkOrdersPage() {
                 <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">View, edit, delete, and export your work order records</p>
             </div>
 
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 mb-6">
                 <MetricCard label="Total Records" value={total} icon="📁" color="primary" />
                 <MetricCard label="On This Page" value={data.length} icon="📄" color="info" />
                 <MetricCard label="Signed on Page" value={`${signedCount} / ${data.length}`} icon="✍️" color="success" />
@@ -160,41 +160,82 @@ export default function WorkOrdersPage() {
                     <p className="text-sm">No work orders found. Upload some files to get started!</p>
                 </div>
             ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] shadow-sm">
-                    <table className="w-full border-collapse text-sm">
-                        <thead>
-                            <tr>
-                                {['#', 'Order #', 'Job #', 'Date', 'Hours', 'Total Due', 'Both Signed', 'Customer', 'WCDP', 'Description', 'Actions'].map(h => (
-                                    <th key={h} className="px-4 py-3 text-left text-[0.7rem] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 whitespace-nowrap">{h}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((row, idx) => {
-                                const serial = (page - 1) * pageSize + idx + 1;
-                                return (
-                                    <tr key={row.id} onClick={() => handleRowClick(row)} className="cursor-pointer border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-primary/[0.03] dark:hover:bg-primary/[0.06] hover:shadow-[inset_3px_0_0_var(--color-primary)] transition-all">
-                                        <td className="px-4 py-3 text-slate-400 text-xs">{serial}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.work_order_number || '—'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.job_number || '—'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.date || '—'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.hours || '—'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.total_amount_due || '—'}</td>
-                                        <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.signed_by_both ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.signed_by_both ? '✓ Yes' : '✗ No'}</span></td>
-                                        <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.customer_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.customer_sign ? '✓' : '✗'}</span></td>
-                                        <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.wcdp_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.wcdp_sign ? '✓' : '✗'}</span></td>
-                                        <td className="px-4 py-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-slate-600 dark:text-slate-300">{row.description || '—'}</td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex gap-1">
-                                                <button className="w-[30px] h-[30px] rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all cursor-pointer" title="Edit" onClick={(e) => handleEditClick(e, row)}>✎</button>
-                                                <button className="w-[30px] h-[30px] rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all cursor-pointer" title="Delete" onClick={(e) => { e.stopPropagation(); setDeleteId(row.id); }}>🗑</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] shadow-sm">
+                    {/* Desktop Table */}
+                    <div className="hidden lg:block overflow-x-auto">
+                        <table className="w-full border-collapse text-sm">
+                            <thead>
+                                <tr>
+                                    {['#', 'Order #', 'Job #', 'Date', 'Hours', 'Total Due', 'Both Signed', 'Customer', 'WCDP', 'Description', 'Actions'].map(h => (
+                                        <th key={h} className="px-4 py-3 text-left text-[0.7rem] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 whitespace-nowrap">{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map((row, idx) => {
+                                    const serial = (page - 1) * pageSize + idx + 1;
+                                    return (
+                                        <tr key={row.id} onClick={() => handleRowClick(row)} className="cursor-pointer border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-primary/[0.03] dark:hover:bg-primary/[0.06] hover:shadow-[inset_3px_0_0_var(--color-primary)] transition-all">
+                                            <td className="px-4 py-3 text-slate-400 text-xs">{serial}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.work_order_number || '—'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.job_number || '—'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.date || '—'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.hours || '—'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.total_amount_due || '—'}</td>
+                                            <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.signed_by_both ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.signed_by_both ? '✓ Yes' : '✗ No'}</span></td>
+                                            <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.customer_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.customer_sign ? '✓' : '✗'}</span></td>
+                                            <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${row.wcdp_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.wcdp_sign ? '✓' : '✗'}</span></td>
+                                            <td className="px-4 py-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-slate-600 dark:text-slate-300">{row.description || '—'}</td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex gap-1">
+                                                    <button className="w-[30px] h-[30px] rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all cursor-pointer" title="Edit" onClick={(e) => handleEditClick(e, row)}>✎</button>
+                                                    <button className="w-[30px] h-[30px] rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all cursor-pointer" title="Delete" onClick={(e) => { e.stopPropagation(); setDeleteId(row.id); }}>🗑</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile Cards */}
+                    <div className="lg:hidden flex flex-col">
+                        {data.map((row, idx) => {
+                            const serial = (page - 1) * pageSize + idx + 1;
+                            return (
+                                <div key={row.id} onClick={() => handleRowClick(row)} className="p-4 border-b border-slate-100 dark:border-white/5 last:border-b-0 hover:bg-primary/[0.02] transition-colors cursor-pointer flex flex-col gap-3">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded-md">#{serial}</span>
+                                            <span className="font-bold text-slate-900 dark:text-slate-100">{row.work_order_number || 'No Order #'}</span>
+                                        </div>
+                                        <div className="flex gap-1 shrink-0">
+                                            <button className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all cursor-pointer" title="Edit" onClick={(e) => handleEditClick(e, row)}>✎</button>
+                                            <button className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all cursor-pointer" title="Delete" onClick={(e) => { e.stopPropagation(); setDeleteId(row.id); }}>🗑</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                        <div><span className="text-xs text-slate-400 block">Job #</span>{row.job_number || '—'}</div>
+                                        <div><span className="text-xs text-slate-400 block">Date</span>{row.date || '—'}</div>
+                                        <div><span className="text-xs text-slate-400 block">Hours</span>{row.hours || '—'}</div>
+                                        <div><span className="text-xs text-slate-400 block">Total Due</span>{row.total_amount_due ? `$${row.total_amount_due}` : '—'}</div>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-1.5 mt-1">
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${row.signed_by_both ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.signed_by_both ? '✓ Both Signed' : '✗ Both Signed'}</span>
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${row.customer_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.customer_sign ? '✓ Customer' : '✗ Customer'}</span>
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold ${row.wcdp_sign ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/8 text-rose-500 dark:text-rose-400'}`}>{row.wcdp_sign ? '✓ WCDP' : '✗ WCDP'}</span>
+                                    </div>
+
+                                    {row.description && (
+                                        <div className="text-xs text-slate-500 line-clamp-2 mt-1">{row.description}</div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             )}
 

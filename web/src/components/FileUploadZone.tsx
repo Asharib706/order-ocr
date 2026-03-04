@@ -49,7 +49,7 @@ export default function FileUploadZone({ onFilesSelected, fileType, disabled }: 
     return (
         <div>
             <div
-                className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer
+                className={`border-2 border-dashed rounded-2xl p-6 md:p-12 text-center transition-all cursor-pointer
           ${isDragging
                         ? 'border-primary bg-primary/5 shadow-[0_0_0_4px_rgba(99,102,241,0.08)]'
                         : 'border-slate-200 dark:border-white/10 bg-primary/[0.01] hover:border-primary hover:bg-primary/[0.03]'
