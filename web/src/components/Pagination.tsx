@@ -1,5 +1,3 @@
-import styles from './Pagination.module.css';
-
 interface PaginationProps {
     page: number;
     totalPages: number;
@@ -25,34 +23,37 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
         return pages;
     };
 
+    const btnBase = 'min-w-[36px] h-9 rounded-lg border font-medium text-sm flex items-center justify-center transition-all cursor-pointer';
+
     return (
-        <div className={styles.pagination}>
+        <div className="flex items-center justify-center gap-1.5 mt-6">
             <button
-                className={styles.navBtn}
+                className={`${btnBase} px-3 border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed`}
                 disabled={page <= 1}
                 onClick={() => onPageChange(page - 1)}
             >
                 ‹ Prev
             </button>
 
-            <div className={styles.pages}>
-                {getPageNumbers().map((p, idx) =>
-                    typeof p === 'string' ? (
-                        <span key={`dots-${idx}`} className={styles.dots}>…</span>
-                    ) : (
-                        <button
-                            key={p}
-                            className={`${styles.pageBtn} ${p === page ? styles.active : ''}`}
-                            onClick={() => onPageChange(p)}
-                        >
-                            {p}
-                        </button>
-                    )
-                )}
-            </div>
+            {getPageNumbers().map((p, idx) =>
+                typeof p === 'string' ? (
+                    <span key={`dots-${idx}`} className="min-w-[36px] h-9 flex items-center justify-center text-sm text-slate-400">…</span>
+                ) : (
+                    <button
+                        key={p}
+                        className={`${btnBase} ${p === page
+                                ? 'bg-primary border-primary text-white font-bold shadow-[0_2px_8px_rgba(99,102,241,0.2)]'
+                                : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
+                            }`}
+                        onClick={() => onPageChange(p)}
+                    >
+                        {p}
+                    </button>
+                )
+            )}
 
             <button
-                className={styles.navBtn}
+                className={`${btnBase} px-3 border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed`}
                 disabled={page >= totalPages}
                 onClick={() => onPageChange(page + 1)}
             >

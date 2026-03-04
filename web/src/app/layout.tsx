@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "OrderOCR — AI-Powered Work Order Extraction",
@@ -14,12 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <div className="app-layout">
-          <Sidebar />
-          <main className="main-content">{children}</main>
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-slate-50 dark:bg-[#0b0f1a] text-slate-900 dark:text-slate-100 min-h-screen">
+        <ThemeProvider>
+          <div className="flex min-h-screen">
+            <Sidebar />
+            <main className="flex-1 ml-[260px] p-8 relative z-[1]">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
